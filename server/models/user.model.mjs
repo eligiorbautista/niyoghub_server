@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
       },
     },
 
-    address: {
+    city: {
       type: String,
     },
 

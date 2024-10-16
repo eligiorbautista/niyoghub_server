@@ -122,6 +122,7 @@ export const login = async (req, res) => {
       fullName: user.fullName,
       email: user.email,
       profilePicture: user.profilePicture,
+      isTwoFactorEnabled: user.isTwoFactorEnabled,
       role: user.role,
     });
   } catch (error) {
@@ -185,7 +186,7 @@ export const register = async (req, res) => {
       email,
       password,
       confirmPassword,
-      address,
+      city,
       language = "english",
     } = req.body;
 
@@ -216,7 +217,7 @@ export const register = async (req, res) => {
       fullName,
       email,
       password: hashedPassword,
-      address,
+      city,
       language,
       profilePicture,
       accountType: "local",
@@ -229,9 +230,10 @@ export const register = async (req, res) => {
         _id: newUser._id,
         fullName: newUser.fullName,
         email: newUser.email,
-        address: newUser.address,
+        city: newUser.city,
         language: newUser.language,
         profilePicture: newUser.profilePicture,
+        isTwoFactorEnabled: newUser.isTwoFactorEnabled,
         role: newUser.role,
       });
     } else {
