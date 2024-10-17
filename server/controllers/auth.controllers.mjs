@@ -111,9 +111,7 @@ export const login = async (req, res) => {
       // Send OTP email
       await sendOTPEmail(user.email, otp);
 
-      return res
-        .status(200)
-        .json({ email: user.email, message: "OTP sent to your email." });
+      return res.status(200).json({ message: "OTP sent to your email." });
     }
 
     // Generate JWT token and set it in a cookie
