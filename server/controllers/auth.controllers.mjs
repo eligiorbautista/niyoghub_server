@@ -167,6 +167,7 @@ export const verifyOTP = async (req, res) => {
 // LOGOUT USER
 export const logout = (req, res) => {
   try {
+    res.token = "";
     res.cookie("jwt", "", { maxAge: 0 });
     res.status(200).json({ message: "Logged out successfully." });
   } catch (error) {
