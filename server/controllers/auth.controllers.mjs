@@ -107,17 +107,18 @@ export const login = async (req, res) => {
       return res.status(200).json({ message: "OTP sent to your email." });
     }
 
-    // Generate JWT token and set it in a cookie
     const token = generateTokenAndSetCookie(user._id, res);
 
     return res.status(200).json({
-      token,
-      _id: user._id,
-      fullName: user.fullName,
-      email: user.email,
-      profilePicture: user.profilePicture,
-      isTwoFactorEnabled: user.isTwoFactorEnabled,
-      role: user.role,
+      token: res.token,
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        profilePicture: user.profilePicture,
+        isTwoFactorEnabled: user.isTwoFactorEnabled,
+        role: user.role,
+      },
     });
   } catch (error) {
     console.log(`Error in login controller: ${error.message}`);
@@ -144,11 +145,10 @@ export const verifyOTP = async (req, res) => {
     user.twoFactorOtpExpiresAt = undefined;
     await user.save();
 
-    // Generate JWT token and set it in a cookie
     const token = generateTokenAndSetCookie(user._id, res);
 
     return res.status(200).json({
-      token: token, // return token in the response
+      token: res.token, // return token in the response
       user: {
         _id: user._id,
         fullName: user.fullName,
