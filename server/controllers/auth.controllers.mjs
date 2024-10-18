@@ -79,51 +79,47 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if the email exists in the database
     const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(400).json({ error: "Invalid email or password." });
     }
 
-    // Ensure the user is using a local account (not Google)
     if (user.accountType !== "local") {
       return res
         .status(400)
         .json({ error: "Please use Google login for this account." });
     }
 
-    // Compare the password
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(400).json({ error: "Invalid email or password." });
     }
 
-    // Check if 2FA is enabled
     if (user.isTwoFactorEnabled) {
-      const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
-      user.twoFactorOtp = otp; // Store OTP temporarily
-      user.twoFactorOtpExpiresAt = Date.now() + 5 * 60 * 1000; // Set expiration time (5 minutes)
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      user.twoFactorOtp = otp;
+      user.twoFactorOtpExpiresAt = Date.now() + 5 * 60 * 1000;
+      await user.save();
 
-      await user.save(); // Save the user with the new OTP
-
-      // Send OTP email
       await sendOTPEmail(user.email, otp);
-
       return res.status(200).json({ message: "OTP sent to your email." });
     }
 
     // Generate JWT token and set it in a cookie
-    generateTokenAndSetCookie(user._id, res);
+    const token = generateTokenAndSetCookie(user._id, res);
 
     return res.status(200).json({
-      _id: user._id,
-      fullName: user.fullName,
-      email: user.email,
-      profilePicture: user.profilePicture,
-      isTwoFactorEnabled: user.isTwoFactorEnabled,
-      role: user.role,
+      token: token, // return token in the response
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        profilePicture: user.profilePicture,
+        isTwoFactorEnabled: user.isTwoFactorEnabled,
+        role: user.role,
+      },
     });
   } catch (error) {
     console.log(`Error in login controller: ${error.message}`);
@@ -146,20 +142,23 @@ export const verifyOTP = async (req, res) => {
       return res.status(400).json({ error: "Invalid or expired OTP." });
     }
 
-    // Clear OTP fields after verification
     user.twoFactorOtp = undefined;
     user.twoFactorOtpExpiresAt = undefined;
     await user.save();
 
     // Generate JWT token and set it in a cookie
-    generateTokenAndSetCookie(user._id, res);
+    const token = generateTokenAndSetCookie(user._id, res);
 
     return res.status(200).json({
-      _id: user._id,
-      fullName: user.fullName,
-      email: user.email,
-      profilePicture: user.profilePicture,
-      role: user.role,
+      token: token, // return token in the response
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        profilePicture: user.profilePicture,
+        isTwoFactorEnabled: user.isTwoFactorEnabled,
+        role: user.role,
+      },
     });
   } catch (error) {
     console.log(`Error in verifyOTP controller: ${error.message}`);
