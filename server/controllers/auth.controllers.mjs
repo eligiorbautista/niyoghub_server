@@ -111,15 +111,13 @@ export const login = async (req, res) => {
     const token = generateTokenAndSetCookie(user._id, res);
 
     return res.status(200).json({
-      token: token, // return token in the response
-      user: {
-        _id: user._id,
-        fullName: user.fullName,
-        email: user.email,
-        profilePicture: user.profilePicture,
-        isTwoFactorEnabled: user.isTwoFactorEnabled,
-        role: user.role,
-      },
+      token,
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      profilePicture: user.profilePicture,
+      isTwoFactorEnabled: user.isTwoFactorEnabled,
+      role: user.role,
     });
   } catch (error) {
     console.log(`Error in login controller: ${error.message}`);
