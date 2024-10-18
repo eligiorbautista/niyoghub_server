@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const sendResetEmail = async (to, resetURL) => {
+export const sendResetEmail = async (to, resetURL, mobileResetURL) => {
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -29,9 +29,12 @@ export const sendResetEmail = async (to, resetURL) => {
           <main style="padding: 20px;">
             <h2>Password Reset</h2>
             <p>Hello,</p>
-            <p>We received a request to reset your password. If you didn’t make this request, just ignore this email. Otherwise, you can reset your password by clicking the button below:</p>
+            <p>We received a request to reset your password. If you didn’t make this request, just ignore this email. Otherwise, you can reset your password by clicking one of the options below:</p>
             <p style="text-align: center;">
-              <a href="${resetURL}" style="display: inline-block; background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset My Password</a>
+              <a href="${resetURL}" style="display: inline-block; background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset My Password on Website</a>
+            </p>
+            <p style="text-align: center; margin-top: 15px;">
+              <a href="${mobileResetURL}" style="display: inline-block; background-color: #FFA500; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset My Password in App</a>
             </p>
             <p>This link is valid for <strong>5 minutes</strong>.</p>
             <p>If you need help, contact our support team at <a href="mailto:niyoghub.assistance@gmail.com" style="color: #4CAF50;">niyoghub.assistance@gmail.com</a>.</p>
@@ -45,9 +48,9 @@ export const sendResetEmail = async (to, resetURL) => {
       `,
       attachments: [
         {
-          filename: "niyoghub.png", // makikita to sa attachments sa email
-          path: path.join(__dirname, "../assets/niyoghub_banner_1.png"), 
-          cid: "logo", // identifier si cid instead na raw link ang ilagay sa src
+          filename: "niyoghub.png", // Displayed as an attachment in the email
+          path: path.join(__dirname, "../assets/niyoghub_banner_1.png"),
+          cid: "logo", // Identifier for the logo image in the email
         },
       ],
     };
@@ -58,7 +61,6 @@ export const sendResetEmail = async (to, resetURL) => {
     throw new Error("Failed to send password reset email.");
   }
 };
-
 
 export const sendOTPEmail = async (to, otp) => {
   try {
