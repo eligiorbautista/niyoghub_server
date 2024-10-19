@@ -109,16 +109,10 @@ export const login = async (req, res) => {
 
     const token = generateTokenAndSetCookie(user._id, res);
 
+    delete user.password;
     return res.status(200).json({
       token: res.token,
-      user: {
-        _id: user._id,
-        fullName: user.fullName,
-        email: user.email,
-        profilePicture: user.profilePicture,
-        isTwoFactorEnabled: user.isTwoFactorEnabled,
-        role: user.role,
-      },
+      user: user,
     });
   } catch (error) {
     console.log(`Error in login controller: ${error.message}`);
@@ -147,16 +141,10 @@ export const verifyOTP = async (req, res) => {
 
     const token = generateTokenAndSetCookie(user._id, res);
 
+    delete user.password;
     return res.status(200).json({
       token: res.token, // return token in the response
-      user: {
-        _id: user._id,
-        fullName: user.fullName,
-        email: user.email,
-        profilePicture: user.profilePicture,
-        isTwoFactorEnabled: user.isTwoFactorEnabled,
-        role: user.role,
-      },
+      user: user,
     });
   } catch (error) {
     console.log(`Error in verifyOTP controller: ${error.message}`);
@@ -224,16 +212,11 @@ export const register = async (req, res) => {
 
     if (newUser) {
       generateTokenAndSetCookie(newUser._id, res); // sets jwt and cookie (logs in automatically)
+
+      delete newUser.password;
       return res.status(201).json({
         token: res.token, // return token in the response
-        user: {
-          _id: newUser._id,
-          fullName: newUser.fullName,
-          email: newUser.email,
-          profilePicture: newUser.profilePicture,
-          isTwoFactorEnabled: newUser.isTwoFactorEnabled,
-          role: newUser.role,
-        },
+        user: newUser,
       });
     } else {
       return res.status(400).json({ error: "Invalid user data." });
