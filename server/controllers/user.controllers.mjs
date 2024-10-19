@@ -33,7 +33,7 @@ export const updateUserProfile = async (req, res) => {
       language,
       profilePicture,
       isTwoFactorEnabled,
-      notifications, // Add notifications to the request body
+      notifications,
     } = req.body;
 
     const user = await User.findById(req.user.id).select("-password");
