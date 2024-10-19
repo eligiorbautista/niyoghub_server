@@ -34,7 +34,7 @@ export const sendResetEmail = async (to, resetURL, mobileResetURL) => {
               <a href="${resetURL}" style="display: inline-block; background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset My Password on Website</a>
             </p>
             <p style="text-align: center; margin-top: 15px;">
-              <a href="${mobileResetURL}" style="display: inline-block; background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset My Password in App</a>
+              <a href="${mobileResetURL}" style="display: inline-block; background-color: #FFA500; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset My Password in App</a>
             </p>
             <p>This link is valid for <strong>5 minutes</strong>.</p>
             <p>If you need help, contact our support team at <a href="mailto:niyoghub.assistance@gmail.com" style="color: #4CAF50;">niyoghub.assistance@gmail.com</a>.</p>
