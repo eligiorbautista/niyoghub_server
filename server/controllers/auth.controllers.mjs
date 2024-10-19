@@ -225,14 +225,15 @@ export const register = async (req, res) => {
     if (newUser) {
       generateTokenAndSetCookie(newUser._id, res); // sets jwt and cookie (logs in automatically)
       return res.status(201).json({
-        _id: newUser._id,
-        fullName: newUser.fullName,
-        email: newUser.email,
-        city: newUser.city,
-        language: newUser.language,
-        profilePicture: newUser.profilePicture,
-        isTwoFactorEnabled: newUser.isTwoFactorEnabled,
-        role: newUser.role,
+        token: res.token, // return token in the response
+        user: {
+          _id: newUser._id,
+          fullName: newUser.fullName,
+          email: newUser.email,
+          profilePicture: newUser.profilePicture,
+          isTwoFactorEnabled: newUser.isTwoFactorEnabled,
+          role: newUser.role,
+        },
       });
     } else {
       return res.status(400).json({ error: "Invalid user data." });
