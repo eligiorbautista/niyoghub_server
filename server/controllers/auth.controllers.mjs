@@ -109,10 +109,12 @@ export const login = async (req, res) => {
 
     const token = generateTokenAndSetCookie(user._id, res);
 
-    delete user.password;
+    const userObject = user.toObject();
+    delete userObject.password;
+
     return res.status(200).json({
       token: res.token,
-      user: user,
+      user: userObject,
     });
   } catch (error) {
     console.log(`Error in login controller: ${error.message}`);
@@ -141,10 +143,12 @@ export const verifyOTP = async (req, res) => {
 
     const token = generateTokenAndSetCookie(user._id, res);
 
-    delete user.password;
+    const userObject = user.toObject();
+    delete userObject.password;
+
     return res.status(200).json({
       token: res.token, // return token in the response
-      user: user,
+      user: userObject,
     });
   } catch (error) {
     console.log(`Error in verifyOTP controller: ${error.message}`);
@@ -213,10 +217,11 @@ export const register = async (req, res) => {
     if (newUser) {
       generateTokenAndSetCookie(newUser._id, res); // sets jwt and cookie (logs in automatically)
 
-      delete newUser.password;
+      const userObject = newUser.toObject();
+      delete userObject.password;
       return res.status(201).json({
         token: res.token, // return token in the response
-        user: newUser,
+        user: userObject,
       });
     } else {
       return res.status(400).json({ error: "Invalid user data." });
