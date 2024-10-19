@@ -26,12 +26,6 @@ export const getUserProfile = async (req, res) => {
 // UPDATE USER PROFILE
 export const updateUserProfile = async (req, res) => {
   try {
-    // if (req.user.role !== "user" || req.user.role !== "admin") {
-    //   return res
-    //     .status(403)
-    //     .json({ message: "Access denied. Users & Admin only." });
-    // }
-
     const {
       fullName,
       email,
@@ -39,6 +33,7 @@ export const updateUserProfile = async (req, res) => {
       language,
       profilePicture,
       isTwoFactorEnabled,
+      notifications, // Add notifications to the request body
     } = req.body;
 
     const user = await User.findById(req.user.id).select("-password");
@@ -57,14 +52,27 @@ export const updateUserProfile = async (req, res) => {
         ? isTwoFactorEnabled
         : user.isTwoFactorEnabled;
 
-    await user.save();
+    // Update notification preferences if provided
+    if (notifications) {
+      user.notifications.announcements =
+        notifications.announcements !== undefined
+          ? notifications.announcements
+          : user.notifications.announcements;
+      user.notifications.events =
+        notifications.events !== undefined
+          ? notifications.events
+          : user.notifications.events;
+      user.notifications.newsAndPrograms =
+        notifications.newsAndPrograms !== undefined
+          ? notifications.newsAndPrograms
+          : user.notifications.newsAndPrograms;
+      user.notifications.chatMessages =
+        notifications.chatMessages !== undefined
+          ? notifications.chatMessages
+          : user.notifications.chatMessages;
+    }
 
-    // Create a notification for profile update
-    await Notification.create({
-      userId: req.user.id,
-      type: "user_activity",
-      message: "Your profile has been updated successfully.",
-    });
+    await user.save();
 
     return res
       .status(200)
