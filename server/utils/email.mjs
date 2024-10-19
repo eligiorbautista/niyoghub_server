@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const sendResetEmail = async (to, resetURL, mobileResetURL) => {
+export const sendResetEmail = async (to, resetURL) => {
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,

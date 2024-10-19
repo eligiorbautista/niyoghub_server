@@ -327,7 +327,7 @@ export const requestPasswordReset = async (req, res) => {
 
     // const mobileResetURL = `niyoghub://ChangePassword/${resetToken}`;
 
-    await sendResetEmail(user.email, resetURL, mobileResetURL);
+    await sendResetEmail(user.email, resetURL);
 
     return res.status(200).json({
       message: "If the email is registered, a reset link will be sent.",
