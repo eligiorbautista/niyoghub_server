@@ -24,8 +24,6 @@ const __dirname = path.dirname(__filename);
 const allowedOrigins = [
   "http://localhost:5173", // Local development
   "https://niyoghub-password-reset.vercel.app", // Deployed frontend URL on Vercel
-  "https://example1.com", // Another domain you want to allow
-  "https://example2.com", // Yet another domain you want to allow
 ];
 
 app.use(
