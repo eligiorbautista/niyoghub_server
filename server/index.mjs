@@ -7,7 +7,7 @@ import adminRoutes from "./routes/admin.routes.mjs";
 import userRoutes from "./routes/user.routes.mjs";
 import articleRoutes from "./routes/article.routes.mjs";
 import messageRoutes from "./routes/message.routes.mjs";
-import notificationRoutes from "./routes/notifications.routes.mjs";  
+import notificationRoutes from "./routes/notifications.routes.mjs";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -20,9 +20,25 @@ const PORT = process.env.PORT || 5000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Define multiple allowed origins
+const allowedOrigins = [
+  "http://localhost:5173", // Local development
+  "https://niyoghub-password-reset.vercel.app", // Deployed frontend URL on Vercel
+  "https://example1.com", // Another domain you want to allow
+  "https://example2.com", // Yet another domain you want to allow
+];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173", // frontend URL
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or CURL requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true); // Allow the request if the origin is in the allowed list
+      } else {
+        callback(new Error("Not allowed by CORS")); // Reject the request if not in the allowed list
+      }
+    },
     credentials: true,
   })
 );
@@ -39,7 +55,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/articles", articleRoutes);
 app.use("/api/messages", messageRoutes);
-app.use("/api/notifications", notificationRoutes);  
+app.use("/api/notifications", notificationRoutes);
 
 app.listen(PORT, () => {
   connectToMongoDB();
