@@ -20,21 +20,21 @@ const PORT = process.env.PORT || 5000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Define multiple allowed origins
 const allowedOrigins = [
-  "http://localhost:5173", // Local development
-  "https://niyoghub-password-reset.vercel.app", // Deployed frontend URL on Vercel
+  "http://localhost:5173", // local development
+  "https://niyoghub-password-reset.vercel.app", // frontend for password reset
 ];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or CURL requests)
+      // allow requests with no origin (mobile apps or CURL requests)
       if (!origin) return callback(null, true);
+
       if (allowedOrigins.includes(origin)) {
-        callback(null, true); // Allow the request if the origin is in the allowed list
+        callback(null, true); // allow the request if the origin is in the allowed list
       } else {
-        callback(new Error("Not allowed by CORS")); // Reject the request if not in the allowed list
+        callback(new Error("Not allowed by CORS")); // reject the request if not in the allowed list
       }
     },
     credentials: true,

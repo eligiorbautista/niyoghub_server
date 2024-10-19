@@ -95,6 +95,25 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+
+    notifications: {
+      announcements: {
+        type: Boolean,
+        default: true,
+      },
+      events: {
+        type: Boolean,
+        default: true,
+      },
+      newsAndPrograms: {
+        type: Boolean,
+        default: true,
+      },
+      chatMessages: {
+        type: Boolean,
+        default: true,
+      },
+    },
   },
   {
     timestamps: true,

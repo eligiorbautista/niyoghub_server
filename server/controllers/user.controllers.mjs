@@ -2,12 +2,13 @@ import User from "../models/user.model.mjs";
 import Notification from "../models/notification.model.mjs";
 import bcrypt from "bcryptjs";
 
-// FETCH USER PROFILE (only for users with role "user")
+// FETCH USER PROFILE
 export const getUserProfile = async (req, res) => {
   try {
-    // ensure that the user's role is not admin
-    if (req.user.role !== "user") {
-      return res.status(403).json({ message: "Access denied. Users only." });
+    if (req.user.role !== "user" || req.user.role !== "admin") {
+      return res
+        .status(403)
+        .json({ message: "Access denied. Users & Admin only." });
     }
 
     const user = await User.findById(req.user.id);
@@ -22,12 +23,13 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
-// UPDATE USER PROFILE (only for users with role "user")
+// UPDATE USER PROFILE
 export const updateUserProfile = async (req, res) => {
   try {
-    // ensure that the user's role is not admin
-    if (req.user.role !== "user") {
-      return res.status(403).json({ message: "Access denied. Users only." });
+    if (req.user.role !== "user" || req.user.role !== "admin") {
+      return res
+        .status(403)
+        .json({ message: "Access denied. Users & Admin only." });
     }
 
     const {
@@ -73,11 +75,13 @@ export const updateUserProfile = async (req, res) => {
   }
 };
 
-// CHANGE USER PASSWORD (only for users with role "user")
+// CHANGE USER PASSWORD
 export const changeUserPassword = async (req, res) => {
   try {
-    if (req.user.role !== "user") {
-      return res.status(403).json({ message: "Access denied. Users only." });
+    if (req.user.role !== "user" || req.user.role !== "admin") {
+      return res
+        .status(403)
+        .json({ message: "Access denied. Users & Admin only." });
     }
 
     const { currentPassword, newPassword, confirmCurrentPassword } = req.body;
