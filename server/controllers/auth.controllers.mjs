@@ -322,10 +322,10 @@ export const requestPasswordReset = async (req, res) => {
     await user.save();
 
     // send reset email
-    const resetURL = `${req.protocol}://${req.get(
-      "host"
-    )}/auth/reset-password/${resetToken}`;
-    const mobileResetURL = `niyoghub://ChangePassword/${resetToken}`;
+    // Update the password reset URL
+    const resetURL = `https://niyoghub-password-reset.vercel.app/change-password?token=${resetToken}`;
+
+    // const mobileResetURL = `niyoghub://ChangePassword/${resetToken}`;
 
     await sendResetEmail(user.email, resetURL, mobileResetURL);
 

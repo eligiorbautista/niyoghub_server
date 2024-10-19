@@ -16,7 +16,10 @@ export const sendResetEmail = async (to, resetURL, mobileResetURL) => {
         pass: process.env.SMTP_PASSWORD,
       },
     });
-
+    /*       <p style="text-align: center; margin-top: 15px;">
+              <a href="${mobileResetURL}" style="display: inline-block; background-color: #FFA500; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset My Password in App</a>
+            </p>
+             */
     const mailOptions = {
       from: `"NiyogHub Support" <${process.env.SMTP_FROM_EMAIL}>`,
       to,
@@ -32,9 +35,6 @@ export const sendResetEmail = async (to, resetURL, mobileResetURL) => {
             <p>We received a request to reset your password. If you didn’t make this request, just ignore this email. Otherwise, you can reset your password by clicking one of the options below:</p>
             <p style="text-align: center;">
               <a href="${resetURL}" style="display: inline-block; background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset My Password on Website</a>
-            </p>
-            <p style="text-align: center; margin-top: 15px;">
-              <a href="${mobileResetURL}" style="display: inline-block; background-color: #FFA500; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset My Password in App</a>
             </p>
             <p>This link is valid for <strong>5 minutes</strong>.</p>
             <p>If you need help, contact our support team at <a href="mailto:niyoghub.assistance@gmail.com" style="color: #4CAF50;">niyoghub.assistance@gmail.com</a>.</p>
