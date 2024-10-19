@@ -28,8 +28,7 @@ const userSchema = new mongoose.Schema(
 
     language: {
       type: String,
-      default: "english",
-      enum: ["english", "filipino"],
+      default: "English (US)",
     },
 
     profilePicture: {
