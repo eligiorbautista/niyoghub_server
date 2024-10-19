@@ -111,6 +111,16 @@ export const login = async (req, res) => {
 
     const userObject = user.toObject();
     delete userObject.password;
+      delete userObject.passwordResetOtp;
+      delete userObject.passwordResetOtpExpiresAt;
+      delete userObject.passwordChangedAt;
+      delete userObject.resetPasswordToken;
+      delete userObject.resetPasswordExpiresAt;
+      delete userObject.twoFactorOtp;
+      delete userObject.twoFactorOtpExpiresAt;
+      delete userObject.createdAt;
+      delete userObject.updatedAt;
+      delete userObject.__v;
 
     return res.status(200).json({
       token: res.token,
@@ -145,6 +155,16 @@ export const verifyOTP = async (req, res) => {
 
     const userObject = user.toObject();
     delete userObject.password;
+      delete userObject.passwordResetOtp;
+      delete userObject.passwordResetOtpExpiresAt;
+      delete userObject.passwordChangedAt;
+      delete userObject.resetPasswordToken;
+      delete userObject.resetPasswordExpiresAt;
+      delete userObject.twoFactorOtp;
+      delete userObject.twoFactorOtpExpiresAt;
+      delete userObject.createdAt;
+      delete userObject.updatedAt;
+      delete userObject.__v;
 
     return res.status(200).json({
       token: res.token, // return token in the response
@@ -218,6 +238,7 @@ export const register = async (req, res) => {
       generateTokenAndSetCookie(newUser._id, res); // sets jwt and cookie (logs in automatically)
 
       const userObject = newUser.toObject();
+      delete userObject.password;
       delete userObject.passwordResetOtp;
       delete userObject.passwordResetOtpExpiresAt;
       delete userObject.passwordChangedAt;
