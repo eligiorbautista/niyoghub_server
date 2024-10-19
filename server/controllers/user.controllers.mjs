@@ -5,11 +5,11 @@ import bcrypt from "bcryptjs";
 // FETCH USER PROFILE
 export const getUserProfile = async (req, res) => {
   try {
-    if (req.user.role !== "user" || req.user.role !== "admin") {
-      return res
-        .status(403)
-        .json({ message: "Access denied. Users & Admin only." });
-    }
+    // if (req.user.role !== "user" || req.user.role !== "admin") {
+    //   return res
+    //     .status(403)
+    //     .json({ message: "Access denied. Users & Admin only." });
+    // }
 
     const user = await User.findById(req.user.id);
     if (!user) {
@@ -26,11 +26,11 @@ export const getUserProfile = async (req, res) => {
 // UPDATE USER PROFILE
 export const updateUserProfile = async (req, res) => {
   try {
-    if (req.user.role !== "user" || req.user.role !== "admin") {
-      return res
-        .status(403)
-        .json({ message: "Access denied. Users & Admin only." });
-    }
+    // if (req.user.role !== "user" || req.user.role !== "admin") {
+    //   return res
+    //     .status(403)
+    //     .json({ message: "Access denied. Users & Admin only." });
+    // }
 
     const {
       fullName,
@@ -78,11 +78,11 @@ export const updateUserProfile = async (req, res) => {
 // CHANGE USER PASSWORD
 export const changeUserPassword = async (req, res) => {
   try {
-    if (req.user.role !== "user" || req.user.role !== "admin") {
-      return res
-        .status(403)
-        .json({ message: "Access denied. Users & Admin only." });
-    }
+    // if (req.user.role !== "user" || req.user.role !== "admin") {
+    //   return res
+    //     .status(403)
+    //     .json({ message: "Access denied. Users & Admin only." });
+    // }
 
     const { currentPassword, newPassword, confirmCurrentPassword } = req.body;
 
