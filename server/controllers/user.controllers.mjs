@@ -84,12 +84,12 @@ export const changeUserPassword = async (req, res) => {
     //     .json({ message: "Access denied. Users & Admin only." });
     // }
 
-    const { currentPassword, newPassword, confirmCurrentPassword } = req.body;
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
 
-    if (currentPassword !== confirmCurrentPassword) {
-      return res
-        .status(400)
-        .json({ message: "Current password and confirmation do not match." });
+    if (newPassword !== confirmNewPassword) {
+      return res.status(400).json({
+        message: "New password and confirm new password do not match.",
+      });
     }
 
     const user = await User.findById(req.user.id);
