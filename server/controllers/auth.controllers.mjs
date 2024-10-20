@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 import crypto from "crypto";
 import { sendResetEmail, sendOTPEmail } from "../utils/email.mjs";
 import generateResetToken from "../utils/generateResetToken.mjs";
+import { createNotification } from "./notifications.controllers.mjs";
 
 dotenv.config();
 
@@ -38,11 +39,20 @@ passport.use(
           });
 
           // Create a registration notification
-          await Notification.create({
-            userId: user._id,
-            type: "Registration",
-            message: "You have successfully registered.",
-          });
+          await createNotification(
+            {
+              body: {
+                userId: newUser._id,
+                message:
+                  "You have successfully registered with your google account.",
+                type: "Registration",
+                read: false,
+              },
+            },
+            {
+              status: () => ({ json: () => {} }),
+            }
+          );
         }
 
         const userObject = user.toObject();
@@ -271,11 +281,19 @@ export const register = async (req, res) => {
       generateTokenAndSetCookie(newUser._id, res); // sets jwt and cookie (logs in automatically)
 
       // Create a registration notification
-      await Notification.create({
-        userId: newUser._id,
-        type: "Registration",
-        message: "You have successfully registered.",
-      });
+      await createNotification(
+        {
+          body: {
+            userId: newUser._id,
+            message: "You have successfully registered.",
+            type: "Registration",
+            read: false,
+          },
+        },
+        {
+          status: () => ({ json: () => {} }),
+        }
+      );
 
       const userObject = newUser.toObject();
       delete userObject.password;
@@ -355,12 +373,20 @@ export const requestPasswordReset = async (req, res) => {
     // check for existing user
     const user = await User.findOne({ email });
 
-    // Create a password reset request notification
-    await Notification.create({
-      userId: user._id,
-      type: "Password Reset Request",
-      message: "A password reset request has been made.",
-    });
+    // Create a registration notification
+    await createNotification(
+      {
+        body: {
+          userId: newUser._id,
+          message: "A password reset request has been made.",
+          type: "Password Reset Request",
+          read: false,
+        },
+      },
+      {
+        status: () => ({ json: () => {} }),
+      }
+    );
 
     if (!user) {
       return res.status(200).json({
@@ -445,6 +471,21 @@ export const resetPassword = async (req, res) => {
       type: "Password Reset",
       message: "Your password has been reset successfully.",
     });
+
+    // Create a registration notification
+    await createNotification(
+      {
+        body: {
+          userId: newUser._id,
+          message: "Your password has been reset successfully.",
+          type: "Password Reset",
+          read: false,
+        },
+      },
+      {
+        status: () => ({ json: () => {} }),
+      }
+    );
 
     return res.status(200).json({ message: "Password reset successfully." });
   } catch (error) {
