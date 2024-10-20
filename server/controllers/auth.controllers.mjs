@@ -377,7 +377,7 @@ export const requestPasswordReset = async (req, res) => {
     await createNotification(
       {
         body: {
-          userId: user._id,
+          userId: user?._id,
           message: "A password reset request has been made.",
           type: "Password Reset Request",
           read: false,
