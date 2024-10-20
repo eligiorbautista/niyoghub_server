@@ -1,5 +1,4 @@
-import User from "../models/user.model.mjs";
-import Notification from "../models/notification.model.mjs";
+import User from "../models/user.model.mjs"; 
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utils/generateToken.mjs";
 import passport from "passport";
@@ -38,13 +37,13 @@ passport.use(
             googleId,
           });
 
-          // Create a registration notification
+          // Create notification
           await createNotification(
             {
               body: {
-                userId: user._id,
+                userId: newUser._id,
                 message:
-                  "You have successfully registered with your google account.",
+                  "Welcome to NiyogHub! Your account has been successfully created.",
                 type: "Registration",
                 read: false,
               },
@@ -280,7 +279,7 @@ export const register = async (req, res) => {
     if (newUser) {
       generateTokenAndSetCookie(newUser._id, res); // sets jwt and cookie (logs in automatically)
 
-      // Create a registration welcome notification
+      // Create notification
       await createNotification(
         {
           body: {
@@ -374,7 +373,7 @@ export const requestPasswordReset = async (req, res) => {
     // check for existing user
     const user = await User.findOne({ email });
 
-    // Create a registration notification
+    // Create notification
     await createNotification(
       {
         body: {
@@ -466,7 +465,7 @@ export const resetPassword = async (req, res) => {
 
     generateTokenAndSetCookie(user._id, res);
 
-    // Create a registration notification
+    // Create notification
     await createNotification(
       {
         body: {
