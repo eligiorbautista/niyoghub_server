@@ -1,5 +1,5 @@
 import User from "../models/user.model.mjs";
-import Notification from "../models/notification.model.mjs";
+import { createNotification } from "./notifications.controllers.mjs";
 import bcrypt from "bcryptjs";
 
 // FETCH USER PROFILE
@@ -29,7 +29,7 @@ export const updateUserProfile = async (req, res) => {
     const {
       fullName,
       email,
-      address,
+      city,
       language,
       profilePicture,
       isTwoFactorEnabled,
@@ -44,7 +44,7 @@ export const updateUserProfile = async (req, res) => {
     // Update user profile fields
     user.fullName = fullName || user.fullName;
     user.email = email || user.email;
-    user.address = address || user.address;
+    user.city = city || user.city;
     user.language = language || user.language;
     user.profilePicture = profilePicture || user.profilePicture;
     user.isTwoFactorEnabled =
@@ -116,12 +116,20 @@ export const changeUserPassword = async (req, res) => {
     user.password = hashedPassword;
     await user.save();
 
-    // create a notification for password change
-    await Notification.create({
-      userId: req.user.id,
-      type: "security",
-      message: "Your password has been changed successfully.",
-    });
+    // Create a registration notification
+    await createNotification(
+      {
+        body: {
+          userId: user._id,
+          message: "Your password has been changed successfully.",
+          type: "Change Password",
+          read: false,
+        },
+      },
+      {
+        status: () => ({ json: () => {} }),
+      }
+    );
 
     return res.status(200).json({ message: "Password changed successfully." });
   } catch (error) {
