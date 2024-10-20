@@ -23,6 +23,7 @@ const __dirname = path.dirname(__filename);
 const allowedOrigins = [
   "http://localhost:5173", // local development
   "https://niyoghub-password-reset.vercel.app", // frontend for password reset
+  
 ];
 
 app.use(

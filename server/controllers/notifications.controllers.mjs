@@ -53,7 +53,23 @@ export const markNotificationAsRead = async (req, res) => {
 
     res.status(200).json(notification);
   } catch (error) {
-    console.error(`Error in markNotificationAsRead controller: ${error.message}`);
+    console.error(
+      `Error in markNotificationAsRead controller: ${error.message}`
+    );
+    res.status(500).json({ error: "Internal server error." });
+  }
+};
+
+export const markAllNotificationAsRead = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Update all notifications for the given userId to set "read" to true
+    await Notification.updateMany({ userId, read: false }, { read: true });
+
+    res.status(200).json({ message: "All notifications marked as read." });
+  } catch (error) {
+    console.error(`Error in markAllAsRead route: ${error.message}`);
     res.status(500).json({ error: "Internal server error." });
   }
 };
