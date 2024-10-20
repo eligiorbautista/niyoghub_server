@@ -280,12 +280,13 @@ export const register = async (req, res) => {
     if (newUser) {
       generateTokenAndSetCookie(newUser._id, res); // sets jwt and cookie (logs in automatically)
 
-      // Create a registration notification
+      // Create a registration welcome notification
       await createNotification(
         {
           body: {
             userId: newUser._id,
-            message: "You have successfully registered.",
+            message:
+              "Welcome to NiyogHub! Your account has been successfully created.",
             type: "Registration",
             read: false,
           },
