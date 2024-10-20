@@ -377,7 +377,7 @@ export const requestPasswordReset = async (req, res) => {
     await createNotification(
       {
         body: {
-          userId: newUser._id,
+          userId: user._id,
           message: "A password reset request has been made.",
           type: "Password Reset Request",
           read: false,
@@ -465,18 +465,11 @@ export const resetPassword = async (req, res) => {
 
     generateTokenAndSetCookie(user._id, res);
 
-    // Create a successful password reset notification
-    await Notification.create({
-      userId: user._id,
-      type: "Password Reset",
-      message: "Your password has been reset successfully.",
-    });
-
     // Create a registration notification
     await createNotification(
       {
         body: {
-          userId: newUser._id,
+          userId: user._id,
           message: "Your password has been reset successfully.",
           type: "Password Reset",
           read: false,
