@@ -42,7 +42,7 @@ passport.use(
           await createNotification(
             {
               body: {
-                userId: newUser._id,
+                userId: user._id,
                 message:
                   "You have successfully registered with your google account.",
                 type: "Registration",
