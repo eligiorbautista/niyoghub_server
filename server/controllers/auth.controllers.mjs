@@ -1,4 +1,5 @@
 import User from "../models/user.model.mjs";
+import Notification from "../models/notification.model.mjs";
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utils/generateToken.mjs";
 import passport from "passport";
@@ -34,6 +35,13 @@ passport.use(
             profilePicture,
             accountType: "google",
             googleId,
+          });
+
+          // Create a registration notification
+          await Notification.create({
+            userId: user._id,
+            type: "Registration",
+            message: "You have successfully registered.",
           });
         }
 
@@ -262,6 +270,13 @@ export const register = async (req, res) => {
     if (newUser) {
       generateTokenAndSetCookie(newUser._id, res); // sets jwt and cookie (logs in automatically)
 
+      // Create a registration notification
+      await Notification.create({
+        userId: newUser._id,
+        type: "Registration",
+        message: "You have successfully registered.",
+      });
+
       const userObject = newUser.toObject();
       delete userObject.password;
       delete userObject.passwordResetOtp;
@@ -340,6 +355,13 @@ export const requestPasswordReset = async (req, res) => {
     // check for existing user
     const user = await User.findOne({ email });
 
+    // Create a password reset request notification
+    await Notification.create({
+      userId: user._id,
+      type: "Password Reset Request",
+      message: "A password reset request has been made.",
+    });
+
     if (!user) {
       return res.status(200).json({
         message: "If the email is registered, a reset link will be sent.",
@@ -416,6 +438,13 @@ export const resetPassword = async (req, res) => {
     await user.save();
 
     generateTokenAndSetCookie(user._id, res);
+
+    // Create a successful password reset notification
+    await Notification.create({
+      userId: user._id,
+      type: "Password Reset",
+      message: "Your password has been reset successfully.",
+    });
 
     return res.status(200).json({ message: "Password reset successfully." });
   } catch (error) {
