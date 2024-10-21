@@ -31,7 +31,6 @@ export const updateUserProfile = async (req, res) => {
       email,
       city,
       language,
-      profilePicture,
       isTwoFactorEnabled,
       notifications,
     } = req.body;
@@ -46,11 +45,15 @@ export const updateUserProfile = async (req, res) => {
     user.email = email || user.email;
     user.city = city || user.city;
     user.language = language || user.language;
-    user.profilePicture = profilePicture || user.profilePicture;
     user.isTwoFactorEnabled =
       isTwoFactorEnabled !== undefined
         ? isTwoFactorEnabled
         : user.isTwoFactorEnabled;
+
+    // Handle profile picture upload
+    if (req.file) {
+      user.profilePicture = `uploads/profiles/${req.file.filename}`;
+    }
 
     // Update notification preferences if provided
     if (notifications) {
