@@ -57,21 +57,27 @@ export const updateUserProfile = async (req, res) => {
 
     // Update notification preferences if provided
     if (notifications) {
+      // If notifications is a string, parse it to an object
+      const parsedNotifications =
+        typeof notifications === "string"
+          ? JSON.parse(notifications)
+          : notifications;
+
       user.notifications.announcements =
-        notifications.announcements !== undefined
-          ? notifications.announcements
+        parsedNotifications.announcements !== undefined
+          ? parsedNotifications.announcements
           : user.notifications.announcements;
       user.notifications.events =
-        notifications.events !== undefined
-          ? notifications.events
+        parsedNotifications.events !== undefined
+          ? parsedNotifications.events
           : user.notifications.events;
       user.notifications.newsAndPrograms =
-        notifications.newsAndPrograms !== undefined
-          ? notifications.newsAndPrograms
+        parsedNotifications.newsAndPrograms !== undefined
+          ? parsedNotifications.newsAndPrograms
           : user.notifications.newsAndPrograms;
       user.notifications.chatMessages =
-        notifications.chatMessages !== undefined
-          ? notifications.chatMessages
+        parsedNotifications.chatMessages !== undefined
+          ? parsedNotifications.chatMessages
           : user.notifications.chatMessages;
     }
 
@@ -85,6 +91,7 @@ export const updateUserProfile = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
 
 // CHANGE USER PASSWORD
 export const changeUserPassword = async (req, res) => {
