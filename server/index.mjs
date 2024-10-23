@@ -1,6 +1,6 @@
 import express from "express";
-import http from "http";  
-import { Server as SocketIOServer } from "socket.io";  
+import http from "http";
+import { Server as SocketIOServer } from "socket.io";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import connectToMongoDB from "./db/connectToMongoDB.mjs";
@@ -18,10 +18,10 @@ import { fileURLToPath } from "url";
 dotenv.config();
 
 const app = express();
-const server = http.createServer(app); // Create an HTTP server
+const server = http.createServer(app);
 const io = new SocketIOServer(server, {
   cors: {
-    origin: "*", // Allow all origins for testing
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
@@ -48,7 +48,12 @@ app.use(
   })
 );
 
-// Serve static files from the uploads folder
+// Middleware to make 'io' accessible in controllers
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 app.use(cookieParser());
@@ -62,14 +67,8 @@ app.use("/api/articles", articleRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/notifications", notificationRoutes);
 
-// Handle socket connections
 io.on("connection", (socket) => {
   console.log("A user connected");
-
-  // Handle sending a message
-  socket.on("sendMessage", (data) => {
-    io.emit("newMessage", data); // Broadcast the new message to all connected clients
-  });
 
   socket.on("disconnect", () => {
     console.log("A user disconnected");

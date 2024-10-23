@@ -2,7 +2,7 @@ import Conversation from "../models/conversation.model.mjs";
 import Message from "../models/message.model.mjs";
 import fs from "fs";
 import path from "path";
-import { v4 as uuidv4 } from "uuid";  
+import { v4 as uuidv4 } from "uuid";
 
 // Send a message from one user to another with optional file attachment
 export const sendMessage = async (req, res, io) => {
@@ -72,7 +72,7 @@ export const sendMessage = async (req, res, io) => {
     conversation.messages.push(newMessage._id);
     await Promise.all([conversation.save(), newMessage.save()]);
 
-    io.emit("newMessage", newMessage); // Emit the new message event
+    req.io.emit("newMessage", newMessage); // Emit the new message event
 
     res.status(201).json(newMessage);
   } catch (error) {
