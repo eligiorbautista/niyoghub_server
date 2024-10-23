@@ -4,7 +4,6 @@ import {
   createAnnouncement,
   getAnnouncements,
   getSingleAnnouncement,
-  updateAnnouncement,
   deleteAnnouncement,
 } from "../controllers/announcement.controllers.mjs";
 import { verifyAuth, verifyAdminAuth } from "../middleware/verifyAuth.mjs";

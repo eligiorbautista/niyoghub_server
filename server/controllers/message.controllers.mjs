@@ -2,23 +2,20 @@ import Conversation from "../models/conversation.model.mjs";
 import Message from "../models/message.model.mjs";
 import fs from "fs";
 import path from "path";
-import { v4 as uuidv4 } from "uuid"; // For generating unique file names
+import { v4 as uuidv4 } from "uuid";  
 
 // Send a message from one user to another with optional file attachment
-export const sendMessage = async (req, res) => {
+export const sendMessage = async (req, res, io) => {
   try {
-    const { message } = req.body; // Message content from request body
-    const { id: receiverId } = req.params; // Receiver's user ID from URL params
-    const senderId = req.user._id; // Sender's user ID from authentication middleware
+    const { message } = req.body;
+    const { id: receiverId } = req.params;
+    const senderId = req.user._id;
 
-    let attachmentPath = null; // Store the file path if a file is uploaded
+    let attachmentPath = null;
 
-    // Check if a file is uploaded
     if (req.file) {
       const __dirname = path.resolve();
-
-      // Determine folder based on file type
-      let folderName = "others"; // Default folder for unknown file types
+      let folderName = "others";
       const fileType = req.file.mimetype;
 
       if (fileType.startsWith("image")) {
@@ -33,57 +30,50 @@ export const sendMessage = async (req, res) => {
         fileType.startsWith("application/vnd") ||
         fileType.startsWith("application/msword")
       ) {
-        folderName = "documents"; // For Word, Excel, and PowerPoint files
+        folderName = "documents";
       } else if (
         fileType === "application/zip" ||
         fileType === "application/x-rar-compressed"
       ) {
-        folderName = "archives"; // For zip and rar files
+        folderName = "archives";
       }
 
-      // Create the folder if it doesn't exist
       const uploadDir = path.join(__dirname, "server/uploads/chat", folderName);
       if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir, { recursive: true });
       }
 
-      // Generate a unique file name and move the file to the correct folder
       const originalFileName = req.file.originalname;
       const ext = path.extname(originalFileName);
       const randomFileName = `${uuidv4()}${ext}`;
       const newPath = path.join(uploadDir, randomFileName);
 
-      fs.renameSync(req.file.path, newPath); // Move the file
-      attachmentPath = path.join(folderName, randomFileName); // Save file path
+      fs.renameSync(req.file.path, newPath);
+      attachmentPath = path.join(folderName, randomFileName);
     }
 
-    // Check if a conversation already exists between the two users
     let conversation = await Conversation.findOne({
       participants: { $all: [senderId, receiverId] },
     });
 
-    // If no conversation exists, create a new one
     if (!conversation) {
       conversation = await Conversation.create({
         participants: [senderId, receiverId],
       });
     }
 
-    // Create a new message document
     const newMessage = new Message({
       senderId,
       receiverId,
       message,
-      attachment: attachmentPath, // Add the file attachment path (if any)
+      attachment: attachmentPath,
     });
 
-    // Add the new message to the conversation's messages array
     conversation.messages.push(newMessage._id);
-
-    // Save both the conversation and the new message in parallel
     await Promise.all([conversation.save(), newMessage.save()]);
 
-    // Return the newly created message as a response
+    io.emit("newMessage", newMessage); // Emit the new message event
+
     res.status(201).json(newMessage);
   } catch (error) {
     console.error(`Error in sendMessage controller: ${error.message}`);
