@@ -87,9 +87,13 @@ export const getMessages = async (req, res) => {
     const { id: userToChatId } = req.params; // The user the sender is chatting with (receiver)
     const senderId = req.user._id; // Sender's user ID from authentication middleware
 
+    // Convert IDs to ObjectId to ensure proper querying
+    const senderObjectId = mongoose.Types.ObjectId(senderId);
+    const receiverObjectId = mongoose.Types.ObjectId(userToChatId);
+
     // Find the conversation between the sender and the receiver
     const conversation = await Conversation.findOne({
-      participants: { $all: [senderId, userToChatId] },
+      participants: { $all: [senderObjectId, receiverObjectId] },
     }).populate("messages"); // Populate the messages in the conversation
 
     // If no conversation exists, return an empty array
