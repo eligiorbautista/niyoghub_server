@@ -3,6 +3,7 @@ import Message from "../models/message.model.mjs";
 import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
+import mongoose from "mongoose";
 
 // Send a message from one user to another with optional file attachment
 export const sendMessage = async (req, res, io) => {
