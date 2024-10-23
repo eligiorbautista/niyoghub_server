@@ -9,7 +9,7 @@ import multer from "multer";
 const router = express.Router();
 
 // Configure multer to handle file uploads
-const upload = multer({ dest: "server/uploads/" });
+const upload = multer({ dest: "server/uploads/chat" });
 
 router.get("/test", (req, res) => res.send("THE MESSAGE ROUTES ARE WORKING!"))
 

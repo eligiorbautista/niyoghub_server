@@ -36,7 +36,7 @@ export const sendMessage = async (req, res) => {
       }
 
       // Create the folder if it doesn't exist
-      const uploadDir = path.join(__dirname, "server/uploads", folderName);
+      const uploadDir = path.join(__dirname, "server/uploads/chat", folderName);
       if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir, { recursive: true });
       }
