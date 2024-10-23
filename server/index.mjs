@@ -5,6 +5,7 @@ import connectToMongoDB from "./db/connectToMongoDB.mjs";
 import authRoutes from "./routes/auth.routes.mjs";
 import adminRoutes from "./routes/admin.routes.mjs";
 import userRoutes from "./routes/user.routes.mjs";
+import announcementRoutes from "./routes/announcement.routes.mjs.mjs";
 import articleRoutes from "./routes/article.routes.mjs";
 import messageRoutes from "./routes/message.routes.mjs";
 import notificationRoutes from "./routes/notifications.routes.mjs";
@@ -23,7 +24,6 @@ const __dirname = path.dirname(__filename);
 const allowedOrigins = [
   "http://localhost:5173", // local development
   "https://niyoghub-password-reset.vercel.app", // frontend for password reset
-  
 ];
 
 app.use(
@@ -52,6 +52,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/announcements", announcementRoutes);
 app.use("/api/articles", articleRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/notifications", notificationRoutes);

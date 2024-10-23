@@ -7,10 +7,10 @@ import {
   updateArticle,
   deleteArticle,
 } from "../controllers/article.controllers.mjs";
-import { verifyAuth, verifyAdminAuth } from "../middleware/verifyAuth.mjs"; 
+import { verifyAuth, verifyAdminAuth } from "../middleware/verifyAuth.mjs";
 
 const router = express.Router();
-const upload = multer({ dest: "./server/uploads/images" }); // upload destination
+const upload = multer({ dest: "./server/uploads/images/articles" }); // upload destination
 
 // CREATE NEW ARTICLE (only admin)
 router.post("/", verifyAdminAuth, upload.single("image"), createArticle);

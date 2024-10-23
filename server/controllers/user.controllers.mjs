@@ -92,7 +92,6 @@ export const updateUserProfile = async (req, res) => {
   }
 };
 
-
 // CHANGE USER PASSWORD
 export const changeUserPassword = async (req, res) => {
   try {

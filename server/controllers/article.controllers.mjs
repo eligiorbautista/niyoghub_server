@@ -10,7 +10,7 @@ export const createArticle = async (req, res) => {
 
     // directory for image uploads
     const __dirname = path.resolve();
-    const uploadDir = path.join(__dirname, "server/uploads", "images");
+    const uploadDir = path.join(__dirname, "server/uploads/images", "articles");
 
     // create directory if don't exist
     if (!fs.existsSync(uploadDir)) {
