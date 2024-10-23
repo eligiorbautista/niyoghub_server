@@ -89,8 +89,8 @@ export const getMessages = async (req, res) => {
     const senderId = req.user._id; // Sender's user ID from authentication middleware
 
     // Convert IDs to ObjectId to ensure proper querying
-    const senderObjectId = mongoose.Types.ObjectId(senderId);
-    const receiverObjectId = mongoose.Types.ObjectId(userToChatId);
+    const senderObjectId = new mongoose.Types.ObjectId(senderId);
+    const receiverObjectId = new mongoose.Types.ObjectId(userToChatId);
 
     // Find the conversation between the sender and the receiver
     const conversation = await Conversation.findOne({
