@@ -13,8 +13,7 @@ const messageSchema = new mongoose.Schema(
       required: true,
     },
     message: {
-      type: String,
-      required: true,
+      type: String, 
     },
     attachment: {
       type: String, // file path for attachments (images, videos, PDFs, etc.)

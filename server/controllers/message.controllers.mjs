@@ -1,8 +1,8 @@
 import Conversation from "../models/conversation.model.mjs";
-import Message from '../models/message.model.mjs';
-import fs from 'fs';
-import path from 'path';
-import { v4 as uuidv4 } from 'uuid'; // For generating unique file names
+import Message from "../models/message.model.mjs";
+import fs from "fs";
+import path from "path";
+import { v4 as uuidv4 } from "uuid"; // For generating unique file names
 
 // Send a message from one user to another with optional file attachment
 export const sendMessage = async (req, res) => {
@@ -29,9 +29,15 @@ export const sendMessage = async (req, res) => {
         folderName = "audios";
       } else if (fileType === "application/pdf") {
         folderName = "pdf";
-      } else if (fileType.startsWith("application/vnd") || fileType.startsWith("application/msword")) {
+      } else if (
+        fileType.startsWith("application/vnd") ||
+        fileType.startsWith("application/msword")
+      ) {
         folderName = "documents"; // For Word, Excel, and PowerPoint files
-      } else if (fileType === "application/zip" || fileType === "application/x-rar-compressed") {
+      } else if (
+        fileType === "application/zip" ||
+        fileType === "application/x-rar-compressed"
+      ) {
         folderName = "archives"; // For zip and rar files
       }
 
