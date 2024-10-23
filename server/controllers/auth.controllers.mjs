@@ -1,4 +1,4 @@
-import User from "../models/user.model.mjs"; 
+import User from "../models/user.model.mjs";
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utils/generateToken.mjs";
 import passport from "passport";
@@ -104,11 +104,15 @@ passport.deserializeUser(async (id, done) => {
 export const checkIfUsersExist = async (req, res) => {
   try {
     const userCount = await User.countDocuments();
+    const admin = await User.findOne({ role: "admin" });
 
     if (userCount === 0) {
       return res.status(200).json({ message: "No admin registered yet." });
     } else {
-      return res.status(200).json({ message: "Admin is already registered." });
+      return res.status(200).json({
+        message: "Admin is already registered.",
+        adminID: admin._id,
+      });
     }
   } catch (error) {
     console.log(`Error in checkIfUsersExist controller: ${error.message}`);
