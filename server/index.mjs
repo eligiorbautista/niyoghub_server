@@ -30,9 +30,7 @@ const PORT = process.env.PORT || 5000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const allowedOrigins = [
-  "https://niyoghub-password-reset.vercel.app",
-];
+const allowedOrigins = ["https://niyoghub-password-reset.vercel.app"];
 
 app.use(
   cors({
@@ -69,6 +67,10 @@ app.use("/api/notifications", notificationRoutes);
 
 io.on("connection", (socket) => {
   console.log("A user connected");
+  // Handle sending a message
+  socket.on("sendMessage", (data) => {
+    io.emit("newMessage", data); // Broadcast the new message to all connected clients
+  });
 
   socket.on("disconnect", () => {
     console.log("A user disconnected");
