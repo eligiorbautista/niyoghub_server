@@ -1,3 +1,4 @@
+// message.controllers.mjs
 import Conversation from "../models/conversation.model.mjs";
 import Message from "../models/message.model.mjs";
 import fs from "fs";
@@ -53,28 +54,37 @@ export const sendMessage = async (req, res, io) => {
       attachmentPath = path.join(folderName, randomFileName);
     }
 
+    // Convert senderId and receiverId to ObjectId
+    const senderObjectId = new mongoose.Types.ObjectId(senderId);
+    const receiverObjectId = new mongoose.Types.ObjectId(receiverId);
+
+    // Find or create the conversation
     let conversation = await Conversation.findOne({
-      participants: { $all: [senderId, receiverId] },
+      participants: { $all: [senderObjectId, receiverObjectId] },
     });
 
     if (!conversation) {
       conversation = await Conversation.create({
-        participants: [senderId, receiverId],
+        participants: [senderObjectId, receiverObjectId],
       });
     }
 
+    // Create a new message
     const newMessage = new Message({
-      senderId,
-      receiverId,
+      senderId: senderObjectId,
+      receiverId: receiverObjectId,
       message,
       attachment: attachmentPath,
     });
 
+    // Save the message and update the conversation
     conversation.messages.push(newMessage._id);
     await Promise.all([conversation.save(), newMessage.save()]);
 
-    req.io.emit("newMessage", newMessage); // Emit the new message event
+    // Emit the new message event
+    req.io.emit("newMessage", newMessage);
 
+    // Return the new message
     res.status(201).json(newMessage);
   } catch (error) {
     console.error(`Error in sendMessage controller: ${error.message}`);
