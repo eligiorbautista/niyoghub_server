@@ -254,6 +254,8 @@ export const register = async (req, res) => {
 
     // check if email already exists
     const existingUser = await User.findOne({ email });
+    const admin = await User.findOne({ role: "admin" });
+    
     if (existingUser) {
       return res.status(400).json({ error: "Email already exists." });
     }
@@ -317,6 +319,7 @@ export const register = async (req, res) => {
       return res.status(201).json({
         token: res.token, // return token in the response
         user: userObject,
+        adminID: admin._id,
       });
     } else {
       return res.status(400).json({ error: "Invalid user data." });
