@@ -109,9 +109,8 @@ export const checkIfUsersExist = async (req, res) => {
     if (userCount === 0) {
       return res.status(200).json({ message: "No admin registered yet." });
     } else {
-      return res.status(200).json({
-        message: "Admin is already registered.",
-        adminID: admin._id,
+      return res.status(200).json({ 
+        admin_id: admin._id,
       });
     }
   } catch (error) {
