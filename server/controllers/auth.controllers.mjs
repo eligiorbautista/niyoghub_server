@@ -109,8 +109,9 @@ export const checkIfUsersExist = async (req, res) => {
     if (userCount === 0) {
       return res.status(200).json({ message: "No admin registered yet." });
     } else {
-      return res.status(200).json({ 
-        admin_id: admin._id,
+      return res.status(200).json({
+        message: "Admin is already registered.",
+        adminID: admin._id,
       });
     }
   } catch (error) {
@@ -125,6 +126,7 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
+    const admin = await User.findOne({ role: "admin" });
 
     if (!user) {
       return res.status(400).json({ error: "Invalid email or password." });
@@ -170,6 +172,7 @@ export const login = async (req, res) => {
     return res.status(200).json({
       token: res.token,
       user: userObject,
+      adminID: admin._id,
     });
   } catch (error) {
     console.log(`Error in login controller: ${error.message}`);
