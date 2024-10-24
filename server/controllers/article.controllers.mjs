@@ -12,12 +12,12 @@ export const createArticle = async (req, res) => {
     const __dirname = path.resolve();
     const uploadDir = path.join(__dirname, "server/uploads/images", "articles");
 
-    // create directory if don't exist
+    // create directory if it doesn't exist
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
 
-    // generate unique file name for the image
+    // generate a unique file name for the image
     const originalFileName = req.file.originalname;
     const ext = path.extname(originalFileName);
     const randomFileName = `${uuidv4()}${ext}`;
@@ -36,6 +36,10 @@ export const createArticle = async (req, res) => {
     });
 
     await article.save();
+
+    // Emit socket event for article creation
+    req.io.emit("articleCreated", article);
+
     return res
       .status(201)
       .json({ message: "Article created successfully", article });
@@ -96,6 +100,10 @@ export const updateArticle = async (req, res) => {
     if (!article) {
       return res.status(404).json({ message: "Article not found." });
     }
+
+    // Emit socket event for article update
+    req.io.emit("articleUpdated", article);
+
     return res
       .status(200)
       .json({ message: "Article updated successfully", article });
@@ -112,6 +120,10 @@ export const deleteArticle = async (req, res) => {
     if (!article) {
       return res.status(404).json({ message: "Article not found." });
     }
+
+    // Emit socket event for article deletion
+    req.io.emit("articleDeleted", req.params.id);
+
     return res.status(200).json({ message: "Article deleted successfully" });
   } catch (error) {
     console.error("Error deleting article:", error.message);
