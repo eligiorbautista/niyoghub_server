@@ -54,6 +54,13 @@ export const createArticle = async (req, res) => {
       type: "New Article",
       read: false,
     }));
+    // Create notifications for filtered users
+    for (const notification of notifications) {
+      await createNotification(
+        { body: notification },
+        { status: () => ({ json: () => {} }) }
+      );
+    }
 
     return res
       .status(201)
