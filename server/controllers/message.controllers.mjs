@@ -105,7 +105,17 @@ export const getMessages = async (req, res) => {
     // Find the conversation between the sender and the receiver
     const conversation = await Conversation.findOne({
       participants: { $all: [senderObjectId, receiverObjectId] },
-    }).populate("messages"); // Populate the messages in the conversation
+    }).populate({
+      path: "messages",
+      match: {
+        // Ensure that you fetch messages from both sender and receiver
+        $or: [
+          { senderId: senderObjectId, receiverId: receiverObjectId },
+          { senderId: receiverObjectId, receiverId: senderObjectId },
+        ],
+      },
+      options: { sort: { createdAt: 1 } }, // Sort messages by creation date
+    });
 
     // If no conversation exists, return an empty array
     if (!conversation) {
