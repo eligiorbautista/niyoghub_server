@@ -2,6 +2,9 @@ import Article from "../models/article.model.mjs";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
 import fs from "fs";
+import User from "../models/user.model.mjs";
+import { createNotification } from "../controllers/notifications.controllers.mjs";
+import Notification from "../models/notification.model.mjs";
 
 // CREATE NEW ARTICLE
 export const createArticle = async (req, res) => {
@@ -39,6 +42,18 @@ export const createArticle = async (req, res) => {
 
     // Emit socket event for article creation
     req.io.emit("articleCreated", article);
+
+    // Create a notification for users who have notifications enabled for articles
+    const users = await User.find(
+      { "notifications.newsAndPrograms": true },
+      "_id"
+    ); // Fetch users who have notifications enabled
+    const notifications = users.map((user) => ({
+      userId: user._id,
+      message: `A new article titled "${title}" has been published.`,
+      type: "New Article",
+      read: false,
+    }));
 
     return res
       .status(201)
