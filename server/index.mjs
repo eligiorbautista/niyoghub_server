@@ -67,9 +67,11 @@ app.use("/api/notifications", notificationRoutes);
 
 io.on("connection", (socket) => {
   console.log("A user connected");
-  // Handle sending a message
-  socket.on("sendMessage", (data) => {
-    io.emit("newMessage", data); // Broadcast the new message to all connected clients
+
+  // Join the user's room using their userId
+  socket.on("join", (userId) => {
+    socket.join(userId);
+    console.log(`User with ID ${userId} joined room`);
   });
 
   socket.on("disconnect", () => {
