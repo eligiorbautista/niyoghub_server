@@ -2,93 +2,96 @@ import Notification from "../models/notification.model.mjs";
 
 // Create a new notification
 export const createNotification = async (req, res) => {
-  try {
-    const { userId, message, type, read } = req.body;
+  const { userId, type, message } = req.body;
 
-    // Create a new notification document
-    const notification = await Notification.create({
-      userId,
-      message,
-      type,
-      read,
-    });
+  try {
+    const notification = new Notification({ userId, type, message });
+    await notification.save();
+
+    // Emit the notification to the specific user using Socket.IO
+    req.io.to(userId).emit("newNotification", notification);
 
     res.status(201).json(notification);
   } catch (error) {
-    console.error(`Error in createNotification controller: ${error.message}`);
-    res.status(500).json({ error: "Internal server error." });
+    res.status(500).json({ message: "Error creating notification", error });
   }
 };
 
 // Get all notifications for a specific user
 export const getUserNotifications = async (req, res) => {
-  try {
-    const { userId } = req.params;
+  const { userId } = req.params;
 
-    // Fetch all notifications for the given userId
+  try {
     const notifications = await Notification.find({ userId });
+
+    // Optionally, emit an event to the user's room indicating notifications have been fetched
+    req.io.to(userId).emit("notificationsFetched", notifications);
 
     res.status(200).json(notifications);
   } catch (error) {
-    console.error(`Error in getUserNotifications controller: ${error.message}`);
-    res.status(500).json({ error: "Internal server error." });
+    res.status(500).json({ message: "Error fetching notifications", error });
   }
 };
 
 // Mark a notification as read
 export const markNotificationAsRead = async (req, res) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    // Find and update the notification by its ID, marking it as read
+  try {
     const notification = await Notification.findByIdAndUpdate(
       id,
       { read: true },
-      { new: true } // Return the updated document
+      { new: true }
     );
 
     if (!notification) {
-      return res.status(404).json({ error: "Notification not found." });
+      return res.status(404).json({ message: "Notification not found" });
     }
+
+    // Emit the updated notification to the user
+    req.io.to(notification.userId.toString()).emit("notificationRead", notification);
 
     res.status(200).json(notification);
   } catch (error) {
-    console.error(
-      `Error in markNotificationAsRead controller: ${error.message}`
-    );
-    res.status(500).json({ error: "Internal server error." });
+    res.status(500).json({ message: "Error marking notification as read", error });
   }
 };
 
+// Mark all notifications as read for a specific user
 export const markAllNotificationAsRead = async (req, res) => {
+  const { userId } = req.params;
+
   try {
-    const { userId } = req.params;
+    const result = await Notification.updateMany(
+      { userId, read: false },
+      { read: true }
+    );
 
-    // Update all notifications for the given userId to set "read" to true
-    await Notification.updateMany({ userId, read: false }, { read: true });
+    // Emit an event to notify the user that all notifications are marked as read
+    req.io.to(userId).emit("allNotificationsRead");
 
-    res.status(200).json({ message: "All notifications marked as read." });
+    res.status(200).json({ message: "All notifications marked as read", result });
   } catch (error) {
-    console.error(`Error in markAllAsRead route: ${error.message}`);
-    res.status(500).json({ error: "Internal server error." });
+    res.status(500).json({ message: "Error marking all notifications as read", error });
   }
 };
 
-// Delete a notification (New function)
+// Delete a notification
 export const deleteNotification = async (req, res) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    // Find and delete the notification by its ID
+  try {
     const notification = await Notification.findByIdAndDelete(id);
 
     if (!notification) {
-      return res.status(404).json({ error: "Notification not found." });
+      return res.status(404).json({ message: "Notification not found" });
     }
 
-    res.status(200).json({ message: "Notification deleted successfully." });
+    // Emit an event to notify the user about the deletion
+    req.io.to(notification.userId.toString()).emit("notificationDeleted", notification._id);
+
+    res.status(200).json({ message: "Notification deleted successfully" });
   } catch (error) {
-    console.error(`Error in deleteNotification controller: ${error.message}`);
-    res.status(500).json({ error: "Internal server error." });
+    res.status(500).json({ message: "Error deleting notification", error });
   }
 };
